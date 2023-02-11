@@ -1,9 +1,16 @@
+using FootballLeague.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<FootballLeagueDbContext>(options =>
+       options.UseSqlServer(configuration["DefaultConnection"])
+);
 
 var app = builder.Build();
 
