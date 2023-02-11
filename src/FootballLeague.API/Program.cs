@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FootballLeagueDbContext>(options =>
-       options.UseSqlServer(configuration["DefaultConnection"])
+       options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 );
 
 var app = builder.Build();

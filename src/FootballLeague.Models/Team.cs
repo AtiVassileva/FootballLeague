@@ -14,6 +14,7 @@ namespace FootballLeague.Models
         [MaxLength(DefaultMaxLength)]
         public string Country { get; set; } = default!;
         public int Points { get; set; }
-        public HashSet<Match> PlayedMatches { get; set; } = new();
+        public List<Match> HomeMatches { get; set; } = new();
+        public List<Match> AwayMatches { get; set; } = new();
     }
 }
