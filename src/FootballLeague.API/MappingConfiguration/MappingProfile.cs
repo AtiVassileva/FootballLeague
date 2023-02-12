@@ -15,6 +15,10 @@ namespace FootballLeague.API.MappingConfiguration
                 .ReverseMap();
             this.CreateMap<Team, TeamPointsResponseModel>()
                 .ReverseMap();
+            this.CreateMap<Match, MatchRequestModel>()
+                .ReverseMap();
+            this.CreateMap<Match, MatchResponseModel>()
+                .ReverseMap();
         }
     }
 }

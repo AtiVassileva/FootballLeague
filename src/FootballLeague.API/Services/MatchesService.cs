@@ -103,6 +103,8 @@ namespace FootballLeague.API.Services
                 _teamsService.UpdateTeamScore(hostId, 0);
                 _teamsService.UpdateTeamScore(guestId, 3);
             }
+
+            _dbContext.SaveChanges();
         }
     }
 }
