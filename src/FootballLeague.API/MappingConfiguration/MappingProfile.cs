@@ -9,15 +9,17 @@ namespace FootballLeague.API.MappingConfiguration
     {
         public MappingProfile()
         {
-            this.CreateMap<Team, TeamRequestModel>()
-                .ReverseMap();
-            this.CreateMap<Team, TeamResponseModel>()
-                .ReverseMap();
-            this.CreateMap<Team, TeamPointsResponseModel>()
-                .ReverseMap();
-            this.CreateMap<Match, MatchRequestModel>()
-                .ReverseMap();
-            this.CreateMap<Match, MatchResponseModel>()
+            CreateMap<Team, TeamRequestModel>()
+            .ReverseMap();
+            CreateMap<Team, TeamResponseModel>()
+            .ReverseMap();
+            CreateMap<Team, TeamPointsResponseModel>()
+            .ReverseMap();
+            CreateMap<Match, MatchRequestModel>()
+            .ReverseMap();
+            CreateMap<Match, MatchResponseModel>()
+                .ForMember(x => x.HostName, cfg => cfg.MapFrom(x => x.Host.Name))
+                .ForMember(x => x.GuestName, cfg => cfg.MapFrom(x => x.Guest.Name))
                 .ReverseMap();
         }
     }

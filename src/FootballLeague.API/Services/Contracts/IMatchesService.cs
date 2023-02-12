@@ -10,5 +10,6 @@ namespace FootballLeague.API.Services.Contracts
         Task<Guid> CreateMatch(MatchRequestModel model);
         Task<bool> UpdateMatch(Guid id, MatchEditModel model);
         Task<bool> DeleteMatch(Guid id);
+        Task<IEnumerable<MatchResponseModel>> GetMatchesByTeam(Guid teamId);
     }
 }

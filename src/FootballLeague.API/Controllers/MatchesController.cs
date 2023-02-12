@@ -50,6 +50,24 @@ namespace FootballLeague.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
             }
         }
+        
+        [HttpGet("byTeam/{teamId}")]
+        public async Task<IActionResult> GetMatchesByTeamId([FromRoute] Guid teamId)
+        {
+            try
+            {
+                var match = await _matchesService.GetMatchesByTeam(teamId);
+                return Ok(match);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateMatch([FromBody] MatchRequestModel model)

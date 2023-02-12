@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using FootballLeague.API.Services.Contracts;
 using FootballLeague.Data;
 using FootballLeague.Models;
@@ -13,25 +14,28 @@ namespace FootballLeague.API.Services
         private readonly FootballLeagueDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ITeamsService _teamsService;
+        private readonly AutoMapper.IConfigurationProvider _configuration;
 
         public MatchesService(FootballLeagueDbContext dbContext, IMapper mapper, ITeamsService teamsService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _teamsService = teamsService;
+            _configuration = mapper.ConfigurationProvider;
         }
 
         public async Task<Guid> CreateMatch(MatchRequestModel model)
         {
             try
             {
-                var isHostTeamPresent = _teamsService.FindTeam(model.HostId);
-                var isGuestTeamPresent = _teamsService.FindTeam(model.GuestId);
+                var isHostTeamPresent = await _teamsService.FindTeam(model.HostId);
+                var isGuestTeamPresent = await _teamsService.FindTeam(model.GuestId);
             }
             catch (ArgumentException)
             {
                 throw;
             }
+
             var matchToAdd = _mapper.Map<Match>(model);
             await _dbContext.Matches.AddAsync(matchToAdd);
             await _dbContext.SaveChangesAsync();
@@ -56,9 +60,11 @@ namespace FootballLeague.API.Services
                 throw new ArgumentException("No matches available!");
             }
 
-            var matches = await _dbContext.Matches.ToListAsync();
-            var matchesResponse = _mapper.Map<IEnumerable<MatchResponseModel>>(matches);
-            return matchesResponse;
+            var matches = await _dbContext.Matches
+                .ProjectTo<MatchResponseModel>(_configuration)
+                .ToListAsync();
+
+            return matches;
         }
 
         public async Task<MatchResponseModel> GetMatchById(Guid id)
@@ -66,6 +72,25 @@ namespace FootballLeague.API.Services
             var match = await FindMatchAsync(id);
             var matchResponse = _mapper.Map<MatchResponseModel>(match);
             return matchResponse;
+        }
+
+        public async Task<IEnumerable<MatchResponseModel>> GetMatchesByTeam(Guid teamId)
+        {
+            try
+            {
+                var isTeamPresent = await _teamsService.FindTeam(teamId);
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+
+            var matchesByTeam = await _dbContext.Matches
+                .Where(m => m.HostId == teamId || m.GuestId == teamId)
+                .ProjectTo<MatchResponseModel>(_configuration)
+                .ToListAsync();
+
+            return matchesByTeam;
         }
 
         public async Task<bool> UpdateMatch(Guid id, MatchEditModel model)
@@ -85,7 +110,10 @@ namespace FootballLeague.API.Services
 
         private async Task<Match> FindMatchAsync(Guid id)
         {
-            var match = await _dbContext.Matches.FirstOrDefaultAsync(t => t.Id == id);
+            var match = await _dbContext.Matches
+                .Include(x => x.Host)
+                .Include(x => x.Guest)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (match == null)
             {
