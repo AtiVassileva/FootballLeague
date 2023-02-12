@@ -7,9 +7,9 @@ namespace FootballLeague.API.Services.Contracts
     public interface ITeamsService
     {
         IEnumerable<Team> GetAllTeams();
-        IEnumerable<Team> GetTeamsRanking();
+        IEnumerable<TeamPointsResponseModel> GetTeamsRanking();
         TeamResponseModel GetTeamById(Guid id);
-        int GetTeamPoints(int teamId);
+        int GetTeamPoints(Guid teamId);
         void CreateTeam(TeamRequestModel model);
         bool UpdateTeam(Guid id, TeamRequestModel model);
         void UpdateTeamScore(Guid id, int pointsToAdd);

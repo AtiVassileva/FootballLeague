@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FootballLeague.Models;
 using FootballLeague.Models.Request;
+using FootballLeague.Models.Response;
 
 namespace FootballLeague.API.MappingConfiguration
 {
@@ -9,6 +10,10 @@ namespace FootballLeague.API.MappingConfiguration
         public MappingProfile()
         {
             this.CreateMap<Team, TeamRequestModel>()
+                .ReverseMap();
+            this.CreateMap<Team, TeamResponseModel>()
+                .ReverseMap();
+            this.CreateMap<Team, TeamPointsResponseModel>()
                 .ReverseMap();
         }
     }

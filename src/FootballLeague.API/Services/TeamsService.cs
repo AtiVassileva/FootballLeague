@@ -18,48 +18,105 @@ namespace FootballLeague.API.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<Team> GetAllTeams() => _dbContext.Teams.ToList();
-
-        void ITeamsService.CreateTeam(TeamRequestModel model)
+        public void CreateTeam(TeamRequestModel model)
         {
             var teamToAdd = _mapper.Map<Team>(model);
             _dbContext.Teams.Add(teamToAdd);
             _dbContext.SaveChanges();            
         }
 
-        bool ITeamsService.DeleteTeam(Guid id)
+        public bool DeleteTeam(Guid id)
         {
-            throw new NotImplementedException();
+            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
+
+            if (team == null)
+            {
+                throw new ArgumentException("Team does not exist!");
+            }
+
+            _dbContext.Teams.Remove(team);
+            _dbContext.SaveChanges();
+            return true;
         }
 
-        IEnumerable<Team> ITeamsService.GetAllTeams()
+        public IEnumerable<Team> GetAllTeams()
         {
-            throw new NotImplementedException();
+            var teams = _dbContext.Teams.ToList();
+            return teams;
         }
 
-        TeamResponseModel ITeamsService.GetTeamById(Guid id)
+        public TeamResponseModel GetTeamById(Guid id)
         {
-            throw new NotImplementedException();
+            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
+
+            if (team == null)
+            {
+                throw new ArgumentException("Team does not exist!");
+            }
+
+            var teamResponse = _mapper.Map<TeamResponseModel>(team);
+            return teamResponse;
         }
 
-        int ITeamsService.GetTeamPoints(int teamId)
+        public int GetTeamPoints(Guid teamId)
         {
-            throw new NotImplementedException();
+            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == teamId);
+
+            if (team == null)
+            {
+                throw new ArgumentException("Team does not exist!");
+            }
+
+            return team.Points;
         }
 
-        IEnumerable<Team> ITeamsService.GetTeamsRanking()
+        public IEnumerable<TeamPointsResponseModel> GetTeamsRanking()
         {
-            throw new NotImplementedException();
+            var teams = GetAllTeams();
+
+            if (!teams.Any())
+            {
+                throw new ArgumentException("No teams available!");
+            }
+
+            var rankedTeams = teams
+                .OrderByDescending(t => t.Points)
+                .ToList();
+
+            var rankedTeamsResponse = _mapper.Map<IEnumerable<TeamPointsResponseModel>>(rankedTeams);
+
+            return rankedTeamsResponse;
         }
 
-        bool ITeamsService.UpdateTeam(Guid id, TeamRequestModel model)
+        public bool UpdateTeam(Guid id, TeamRequestModel model)
         {
-            throw new NotImplementedException();
+            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
+
+            if (team == null)
+            {
+                throw new ArgumentException("Team does not exist!");
+            }
+
+            team.Name = model.Name;
+            team.Country = model.Country;
+            team.Points = model.Points;
+
+            _dbContext.SaveChanges();
+
+            return true;
         }
 
-        void ITeamsService.UpdateTeamScore(Guid id, int pointsToAdd)
+        public void UpdateTeamScore(Guid id, int pointsToAdd)
         {
-            throw new NotImplementedException();
+            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
+
+            if (team == null)
+            {
+                throw new ArgumentException("Team does not exist!");
+            }
+
+            team.Points += pointsToAdd;
+            _dbContext.SaveChanges();
         }
     }
 }
