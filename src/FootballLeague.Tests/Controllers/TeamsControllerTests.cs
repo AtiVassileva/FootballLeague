@@ -154,5 +154,52 @@ namespace FootballLeague.Tests.Controllers
                 Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
             });
         }
+        
+        [Test]
+        public async Task GetTeamPointsShouldReturnOkResponseWithValidId()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.GetTeamPoints(ValidTestId))
+                .ReturnsAsync(5);
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.GetTeamPoints(ValidTestId);
+
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
+        [Test]
+        public async Task GetTeamPointsShouldReturnBadRequestWithoutData()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.GetTeamPoints(InvalidTestId))
+                .ThrowsAsync(new ArgumentException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.GetTeamPoints(InvalidTestId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task GetTeamPointsShouldReturnInternalServerErrorWhenErrorOccurs()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.GetTeamPoints(InvalidTestId))
+                .ThrowsAsync(new FormatException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.GetTeamPoints(InvalidTestId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            });
+        }
     }
 }
