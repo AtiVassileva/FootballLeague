@@ -19,12 +19,12 @@ namespace FootballLeague.API.Services
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateTeam(TeamRequestModel model)
+        public async Task<Guid> CreateTeam(TeamRequestModel model)
         {
             var teamToAdd = _mapper.Map<Team>(model);
             await _dbContext.Teams.AddAsync(teamToAdd);
             await _dbContext.SaveChangesAsync();
-            return true;
+            return teamToAdd.Id;
         }
 
         public async Task<bool> DeleteTeam(Guid id)

@@ -11,7 +11,6 @@ namespace FootballLeague.Models.Request
         [Required]
         [StringLength(DefaultMaxLength, MinimumLength = DefaultMinLength)]
         public string Country { get; set; } = default!;
-        [Range(0, int.MaxValue)]
-        public int Points { get; set; }
+        [Range(0, int.MaxValue)] public int Points { get; set; }
     }
 }
