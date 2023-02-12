@@ -1,4 +1,5 @@
-﻿using FootballLeague.API.Services.Contracts;
+﻿using AutoMapper;
+using FootballLeague.API.Services.Contracts;
 using FootballLeague.Data;
 using FootballLeague.Models;
 using FootballLeague.Models.Request;
@@ -9,23 +10,19 @@ namespace FootballLeague.API.Services
     public class TeamsService : ITeamsService
     {
         private readonly FootballLeagueDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public TeamsService(FootballLeagueDbContext dbContext)
+        public TeamsService(FootballLeagueDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public IEnumerable<Team> GetAllTeams() => _dbContext.Teams.ToList();
 
         void ITeamsService.CreateTeam(TeamRequestModel model)
         {
-            var teamToAdd = new Team()
-            {
-                Name = model.Name,
-                Country = model.Country,
-                Points = model.Points
-            };
-
+            var teamToAdd = _mapper.Map<Team>(model);
             _dbContext.Teams.Add(teamToAdd);
             _dbContext.SaveChanges();            
         }
