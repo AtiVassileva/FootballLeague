@@ -1,3 +1,4 @@
+using FootballLeague.API.MappingConfiguration;
 using FootballLeague.API.Services;
 using FootballLeague.API.Services.Contracts;
 using FootballLeague.Data;
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<FootballLeagueDbContext>(options =>
 );
 builder.Services.AddScoped<ITeamsService, TeamsService>();
 builder.Services.AddScoped<IMatchesService, MatchesService>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
