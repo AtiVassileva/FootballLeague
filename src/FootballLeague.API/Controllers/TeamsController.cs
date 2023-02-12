@@ -16,10 +16,25 @@ namespace FootballLeague.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll() => Ok(_teamsService.GetAllTeams());
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var allTeams = await _teamsService.GetAllTeams();
+                return Ok(allTeams);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
+        }
 
         [HttpGet("ranking")]
-        public async Task<IActionResult> GetTeamsRanking() 
+        public async Task<IActionResult> GetTeamsRanking()
         {
             try
             {
@@ -28,16 +43,16 @@ namespace FootballLeague.API.Controllers
             }
             catch (ArgumentException argExc)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message); 
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute]Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try
             {
@@ -53,9 +68,9 @@ namespace FootballLeague.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
             }
         }
-        
+
         [HttpGet("{id}/score")]
-        public async Task<IActionResult> GetTeamPoints([FromRoute]Guid id)
+        public async Task<IActionResult> GetTeamPoints([FromRoute] Guid id)
         {
             try
             {

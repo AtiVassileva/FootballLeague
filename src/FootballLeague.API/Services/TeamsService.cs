@@ -35,10 +35,16 @@ namespace FootballLeague.API.Services
             return true;
         }
 
-        public async Task<IEnumerable<Team>> GetAllTeams()
+        public async Task<IEnumerable<TeamResponseModel>> GetAllTeams()
         {
+            if (!_dbContext.Teams.Any())
+            {
+                throw new ArgumentException("No teams available");
+            }
+
             var teams = await _dbContext.Teams.ToListAsync();
-            return teams;
+            var teamsResponse = _mapper.Map<IEnumerable<TeamResponseModel>>(teams);
+            return teamsResponse;
         }
 
         public async Task<TeamResponseModel> GetTeamById(Guid id)
@@ -65,6 +71,7 @@ namespace FootballLeague.API.Services
 
             var rankedTeams = teams
                 .OrderByDescending(t => t.Points)
+                .ThenBy(t => t.Name)
                 .ToList();
 
             var rankedTeamsResponse = _mapper.Map<IEnumerable<TeamPointsResponseModel>>(rankedTeams);
