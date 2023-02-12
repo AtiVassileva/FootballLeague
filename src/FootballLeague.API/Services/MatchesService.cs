@@ -1,6 +1,8 @@
-﻿namespace FootballLeague.API.Services
+﻿using FootballLeague.API.Services.Contracts;
+
+namespace FootballLeague.API.Services
 {
-    public class MatchesService
+    public class MatchesService : IMatchesService
     {
     }
 }

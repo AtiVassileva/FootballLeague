@@ -1,3 +1,5 @@
+using FootballLeague.API.Services;
+using FootballLeague.API.Services.Contracts;
 using FootballLeague.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FootballLeagueDbContext>(options =>
        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 );
+builder.Services.AddScoped<ITeamsService, TeamsService>();
+builder.Services.AddScoped<IMatchesService, MatchesService>();
 
 var app = builder.Build();
 
