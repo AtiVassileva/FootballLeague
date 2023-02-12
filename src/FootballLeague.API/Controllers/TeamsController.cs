@@ -19,63 +19,144 @@ namespace FootballLeague.API.Controllers
         public IActionResult GetAll() => Ok(_teamsService.GetAllTeams());
 
         [HttpGet("ranking")]
-        public IActionResult GetTeamsRanking() => Ok(_teamsService.GetTeamsRanking());
+        public async Task<IActionResult> GetTeamsRanking() 
+        {
+            try
+            {
+                var rankedTeams = await _teamsService.GetTeamsRanking();
+                return Ok(rankedTeams);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message); 
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
+        }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute]Guid id)
+        public async Task<IActionResult> GetById([FromRoute]Guid id)
         {
-            var team = _teamsService.GetTeamById(id);
-            return Ok(team);
+            try
+            {
+                var team = await _teamsService.GetTeamById(id);
+                return Ok(team);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
         }
         
         [HttpGet("{id}/score")]
-        public IActionResult GetTeamPoints([FromRoute]Guid id)
+        public async Task<IActionResult> GetTeamPoints([FromRoute]Guid id)
         {
-            var teamPoints = _teamsService.GetTeamPoints(id);
-            return Ok(teamPoints);
+            try
+            {
+                var teamPoints = await _teamsService.GetTeamPoints(id);
+                return Ok(teamPoints);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
         }
 
         [HttpPost]
-        public IActionResult CreateTeam([FromBody] TeamRequestModel model)
+        public async Task<IActionResult> CreateTeam([FromBody] TeamRequestModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status400BadRequest, ModelState.Values.SelectMany(s => s.Errors));
             }
 
-            _teamsService.CreateTeam(model);
-            return Ok();
+            try
+            {
+                var isCreatedSuccessfully = await _teamsService.CreateTeam(model);
+                return Ok(isCreatedSuccessfully);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTeam([FromRoute] Guid id, [FromBody] TeamRequestModel model)
+        public async Task<IActionResult> UpdateTeam([FromRoute] Guid id, [FromBody] TeamRequestModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status400BadRequest, ModelState.Values.SelectMany(s => s.Errors));
             }
 
-            _teamsService.UpdateTeam(id, model);
-            return Ok();
+            try
+            {
+                var isUpdatedSuccessfully = await _teamsService.CreateTeam(model);
+                return Ok(isUpdatedSuccessfully);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}/score")]
-        public IActionResult UpdateTeamPoints([FromRoute] Guid id, int pointsToAdd)
+        public async Task<IActionResult> UpdateTeamPoints([FromRoute] Guid id, int pointsToAdd)
         {
-            if (!ModelState.IsValid)
+            if (pointsToAdd < 0)
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status400BadRequest, "Points cannot be a negative number!");
             }
 
-            _teamsService.UpdateTeamScore(id, pointsToAdd);
-            return Ok();
+            try
+            {
+                var updatedScore = await _teamsService.UpdateTeamScore(id, pointsToAdd);
+                return Ok(updatedScore);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTeam([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteTeam([FromRoute] Guid id)
         {
-            var result = _teamsService.DeleteTeam(id);
-            return Ok(result);
+            try
+            {
+                var isDeletedSuccessfully = await _teamsService.DeleteTeam(id);
+                return Ok(isDeletedSuccessfully);
+            }
+            catch (ArgumentException argExc)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+            }
         }
     }
 }
