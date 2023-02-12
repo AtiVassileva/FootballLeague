@@ -10,7 +10,7 @@ namespace FootballLeague.API.Services.Contracts
         IEnumerable<Team> GetTeamsRanking();
         TeamResponseModel GetTeamById(Guid id);
         int GetTeamPoints(int teamId);
-        Guid CreateTeam(TeamRequestModel model);
+        void CreateTeam(TeamRequestModel model);
         bool UpdateTeam(Guid id, TeamRequestModel model);
         void UpdateTeamScore(Guid id, int pointsToAdd);
         bool DeleteTeam(Guid id);
