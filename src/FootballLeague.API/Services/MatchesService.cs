@@ -23,6 +23,15 @@ namespace FootballLeague.API.Services
 
         public async Task<Guid> CreateMatch(MatchRequestModel model)
         {
+            try
+            {
+                var isHostTeamPresent = _teamsService.FindTeam(model.HostId);
+                var isGuestTeamPresent = _teamsService.FindTeam(model.GuestId);
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
             var matchToAdd = _mapper.Map<Match>(model);
             await _dbContext.Matches.AddAsync(matchToAdd);
             await _dbContext.SaveChangesAsync();

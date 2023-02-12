@@ -1,4 +1,5 @@
-﻿using FootballLeague.Models.Request;
+﻿using FootballLeague.Models;
+using FootballLeague.Models.Request;
 using FootballLeague.Models.Response;
 
 namespace FootballLeague.API.Services.Contracts
@@ -13,5 +14,6 @@ namespace FootballLeague.API.Services.Contracts
         Task<bool> UpdateTeam(Guid id, TeamRequestModel model);
         Task<int> UpdateTeamScore(Guid id, int pointsToAdd);
         Task<bool> DeleteTeam(Guid id);
+        Task<Team> FindTeam(Guid id);
     }
 }

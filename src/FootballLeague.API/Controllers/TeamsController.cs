@@ -100,10 +100,6 @@ namespace FootballLeague.API.Controllers
                 var isCreatedSuccessfully = await _teamsService.CreateTeam(model);
                 return Ok(isCreatedSuccessfully);
             }
-            catch (ArgumentException argExc)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, argExc.Message);
-            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");

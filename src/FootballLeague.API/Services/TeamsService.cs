@@ -29,7 +29,7 @@ namespace FootballLeague.API.Services
 
         public async Task<bool> DeleteTeam(Guid id)
         {
-            var team = await FindTeamAsync(id);
+            var team = await FindTeam(id);
             _dbContext.Teams.Remove(team);
             await _dbContext.SaveChangesAsync();
             return true;
@@ -49,14 +49,14 @@ namespace FootballLeague.API.Services
 
         public async Task<TeamResponseModel> GetTeamById(Guid id)
         {
-            var team = await FindTeamAsync(id);
+            var team = await FindTeam(id);
             var teamResponse = _mapper.Map<TeamResponseModel>(team);
             return teamResponse;
         }
 
         public async Task<int> GetTeamPoints(Guid teamId)
         {
-            var team = await FindTeamAsync(teamId);
+            var team = await FindTeam(teamId);
             return team.Points;
         }
 
@@ -81,7 +81,7 @@ namespace FootballLeague.API.Services
 
         public async Task<bool> UpdateTeam(Guid id, TeamRequestModel model)
         {
-            var team = await FindTeamAsync(id);
+            var team = await FindTeam(id);
 
             team.Name = model.Name;
             team.Country = model.Country;
@@ -94,13 +94,13 @@ namespace FootballLeague.API.Services
 
         public async Task<int> UpdateTeamScore(Guid id, int pointsToAdd)
         {
-            var team = await FindTeamAsync(id);
+            var team = await FindTeam(id);
             team.Points += pointsToAdd;
             _dbContext.SaveChanges();
             return team.Points;
         }
 
-        private async Task<Team> FindTeamAsync(Guid id)
+        public async Task<Team> FindTeam(Guid id)
         {
             var team = await _dbContext.Teams.FirstOrDefaultAsync(t => t.Id == id);
 
