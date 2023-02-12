@@ -120,7 +120,7 @@ namespace FootballLeague.API.Controllers
 
             try
             {
-                var isUpdatedSuccessfully = await _teamsService.CreateTeam(model);
+                var isUpdatedSuccessfully = await _teamsService.UpdateTeam(id, model);
                 return Ok(isUpdatedSuccessfully);
             }
             catch (ArgumentException argExc)
@@ -134,7 +134,7 @@ namespace FootballLeague.API.Controllers
         }
 
         [HttpPut("{id}/score")]
-        public async Task<IActionResult> UpdateTeamPoints([FromRoute] Guid id, int pointsToAdd)
+        public async Task<IActionResult> UpdateTeamScore([FromRoute] Guid id, int pointsToAdd)
         {
             if (pointsToAdd < 0)
             {
