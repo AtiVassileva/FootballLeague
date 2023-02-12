@@ -4,6 +4,7 @@ using FootballLeague.Data;
 using FootballLeague.Models;
 using FootballLeague.Models.Request;
 using FootballLeague.Models.Response;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballLeague.API.Services
 {
@@ -22,57 +23,39 @@ namespace FootballLeague.API.Services
         {
             var teamToAdd = _mapper.Map<Team>(model);
             _dbContext.Teams.Add(teamToAdd);
-            _dbContext.SaveChanges();            
+            _dbContext.SaveChanges();
         }
 
-        public bool DeleteTeam(Guid id)
+        public async Task<bool> DeleteTeam(Guid id)
         {
-            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
-
-            if (team == null)
-            {
-                throw new ArgumentException("Team does not exist!");
-            }
-
+            var team = await FindTeamAsync(id);
             _dbContext.Teams.Remove(team);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
-        public IEnumerable<Team> GetAllTeams()
+        public async Task<IEnumerable<Team>> GetAllTeams()
         {
-            var teams = _dbContext.Teams.ToList();
+            var teams = await _dbContext.Teams.ToListAsync();
             return teams;
         }
 
-        public TeamResponseModel GetTeamById(Guid id)
+        public async Task<TeamResponseModel> GetTeamById(Guid id)
         {
-            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
-
-            if (team == null)
-            {
-                throw new ArgumentException("Team does not exist!");
-            }
-
+            var team = await FindTeamAsync(id);
             var teamResponse = _mapper.Map<TeamResponseModel>(team);
             return teamResponse;
         }
 
-        public int GetTeamPoints(Guid teamId)
+        public async Task<int> GetTeamPoints(Guid teamId)
         {
-            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == teamId);
-
-            if (team == null)
-            {
-                throw new ArgumentException("Team does not exist!");
-            }
-
+            var team = await FindTeamAsync(teamId);
             return team.Points;
         }
 
-        public IEnumerable<TeamPointsResponseModel> GetTeamsRanking()
+        public async Task<IEnumerable<TeamPointsResponseModel>> GetTeamsRanking()
         {
-            var teams = GetAllTeams();
+            var teams = await GetAllTeams();
 
             if (!teams.Any())
             {
@@ -88,14 +71,9 @@ namespace FootballLeague.API.Services
             return rankedTeamsResponse;
         }
 
-        public bool UpdateTeam(Guid id, TeamRequestModel model)
+        public async Task<bool> UpdateTeam(Guid id, TeamRequestModel model)
         {
-            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
-
-            if (team == null)
-            {
-                throw new ArgumentException("Team does not exist!");
-            }
+            var team = await FindTeamAsync(id);
 
             team.Name = model.Name;
             team.Country = model.Country;
@@ -106,17 +84,24 @@ namespace FootballLeague.API.Services
             return true;
         }
 
-        public void UpdateTeamScore(Guid id, int pointsToAdd)
+        public async Task<int> UpdateTeamScore(Guid id, int pointsToAdd)
         {
-            var team = _dbContext.Teams.FirstOrDefault(t => t.Id == id);
+            var team = await FindTeamAsync(id);
+            team.Points += pointsToAdd;
+            _dbContext.SaveChanges();
+            return team.Points;
+        }
+
+        private async Task<Team> FindTeamAsync(Guid id)
+        {
+            var team = await _dbContext.Teams.FirstOrDefaultAsync(t => t.Id == id);
 
             if (team == null)
             {
                 throw new ArgumentException("Team does not exist!");
             }
 
-            team.Points += pointsToAdd;
-            _dbContext.SaveChanges();
+            return team;
         }
     }
 }

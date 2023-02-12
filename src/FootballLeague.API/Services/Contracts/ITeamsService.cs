@@ -6,13 +6,13 @@ namespace FootballLeague.API.Services.Contracts
 {
     public interface ITeamsService
     {
-        IEnumerable<Team> GetAllTeams();
-        IEnumerable<TeamPointsResponseModel> GetTeamsRanking();
-        TeamResponseModel GetTeamById(Guid id);
-        int GetTeamPoints(Guid teamId);
+        Task<IEnumerable<Team>> GetAllTeams();
+        Task<IEnumerable<TeamPointsResponseModel>> GetTeamsRanking();
+        Task<TeamResponseModel> GetTeamById(Guid id);
+        Task<int> GetTeamPoints(Guid teamId);
         void CreateTeam(TeamRequestModel model);
-        bool UpdateTeam(Guid id, TeamRequestModel model);
-        void UpdateTeamScore(Guid id, int pointsToAdd);
-        bool DeleteTeam(Guid id);
+        Task<bool> UpdateTeam(Guid id, TeamRequestModel model);
+        Task<int> UpdateTeamScore(Guid id, int pointsToAdd);
+        Task<bool> DeleteTeam(Guid id);
     }
 }
