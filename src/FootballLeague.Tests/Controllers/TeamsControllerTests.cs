@@ -57,5 +57,52 @@ namespace FootballLeague.Tests.Controllers
                 Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
             });
         }
+
+        [Test]
+        public async Task GetTeamsRankingShouldReturnOkResponseWithData()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.GetTeamsRanking())
+                .ReturnsAsync(new List<TeamResponseModel>(1));
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.GetTeamsRanking();
+
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
+        [Test]
+        public async Task GetTeamsRankingShouldReturnBadRequestWithoutData()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.GetTeamsRanking())
+                .ThrowsAsync(new ArgumentException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.GetTeamsRanking();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task GetTeamsRankingShouldReturnInternalServerErrorWhenErrorOccurs()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.GetTeamsRanking())
+                .ThrowsAsync(new FormatException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.GetTeamsRanking();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            });
+        }
     }
 }
