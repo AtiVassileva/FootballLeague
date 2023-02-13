@@ -44,7 +44,7 @@ namespace FootballLeague.Tests.Controllers
                 Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
             });
         }
-        
+
         [Test]
         public async Task GetAllShouldReturnInternalServerErrorWhenErrorOccurs()
         {
@@ -155,7 +155,7 @@ namespace FootballLeague.Tests.Controllers
                 Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
             });
         }
-        
+
         [Test]
         public async Task GetTeamPointsShouldReturnOkResponseWithValidId()
         {
@@ -233,7 +233,7 @@ namespace FootballLeague.Tests.Controllers
             };
 
             var mockService = new Mock<ITeamsService>();
-           
+
             var controller = new TeamsController(mockService.Object);
             controller.ModelState.AddModelError("Name", "Required");
 
@@ -262,6 +262,205 @@ namespace FootballLeague.Tests.Controllers
 
             var controller = new TeamsController(mockService.Object);
             var result = await controller.CreateTeam(validModelState);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            });
+        }
+
+        [Test]
+        public async Task UpdateTeamShouldReturnOkResultWithValidModelState()
+        {
+            var validModelState = new TeamRequestModel
+            {
+                Name = "Test",
+                Country = "Bulgaria",
+                Points = 1
+            };
+
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.UpdateTeam(ValidTestId, validModelState))
+                .ReturnsAsync(true);
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeam(ValidTestId, validModelState);
+
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
+        [Test]
+        public async Task UpdateTeamShouldReturnBadRequestResultWithInvalidModelState()
+        {
+            var invalidModelState = new TeamRequestModel
+            {
+                Country = "b",
+                Points = -1
+            };
+
+            var mockService = new Mock<ITeamsService>();
+
+            var controller = new TeamsController(mockService.Object);
+            controller.ModelState.AddModelError("Name", "Required");
+
+            var result = await controller.UpdateTeam(InvalidTestId, invalidModelState);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task UpdateTeamShouldReturnBadRequestWhenArgumentExceptionOccurs()
+        {
+            var validModelState = new TeamRequestModel
+            {
+                Name = "Test",
+                Country = "Bulgaria",
+                Points = 1
+            };
+
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.UpdateTeam(ValidTestId, validModelState))
+                .ThrowsAsync(new ArgumentException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeam(ValidTestId, validModelState);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task UpdateTeamShouldReturnInternalServerErrorIfErrorOccurs()
+        {
+            var validModelState = new TeamRequestModel
+            {
+                Name = "Test",
+                Country = "Bulgaria",
+                Points = 1
+            };
+
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.UpdateTeam(ValidTestId, validModelState))
+                .ThrowsAsync(new FormatException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeam(ValidTestId, validModelState);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            });
+        }
+
+        [Test]
+        public async Task UpdateTeamScoreShouldReturnOkResultWithValidData()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.UpdateTeamScore(ValidTestId, 2))
+                .ReturnsAsync(2);
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeamScore(ValidTestId, 2);
+
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
+        [Test]
+        public async Task UpdateTeamScoreShouldReturnBadRequestResultWithNegativePoints()
+        {
+            var mockService = new Mock<ITeamsService>();
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeamScore(InvalidTestId, -2);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task UpdateTeamScoreShouldReturnBadRequestWhenArgumentExceptionOccurs()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.UpdateTeamScore(ValidTestId, 1))
+                .ThrowsAsync(new ArgumentException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeamScore(ValidTestId, 1);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task UpdateTeamScoreShouldReturnInternalServerErrorIfErrorOccurs()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.UpdateTeamScore(ValidTestId, 1))
+                .ThrowsAsync(new FormatException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.UpdateTeamScore(ValidTestId, 1);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            });
+        }
+
+        [Test]
+        public async Task DeleteTeamShouldReturnOkResultWithValidData()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.DeleteTeam(ValidTestId))
+                .ReturnsAsync(true);
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.DeleteTeam(ValidTestId);
+
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
+        [Test]
+        public async Task DeleteTeamShouldReturnBadRequestWhenArgumentExceptionOccurs()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.DeleteTeam(ValidTestId))
+                .ThrowsAsync(new ArgumentException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.DeleteTeam(ValidTestId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
+        }
+
+        [Test]
+        public async Task DeleteTeamShouldReturnInternalServerErrorIfErrorOccurs()
+        {
+            var mockService = new Mock<ITeamsService>();
+            mockService.Setup(x => x.DeleteTeam(ValidTestId))
+                .ThrowsAsync(new FormatException());
+
+            var controller = new TeamsController(mockService.Object);
+            var result = await controller.DeleteTeam(ValidTestId);
 
             Assert.Multiple(() =>
             {
