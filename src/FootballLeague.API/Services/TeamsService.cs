@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using FootballLeague.API.Services.Contracts;
 using FootballLeague.Data;
-using FootballLeague.Models;
+using FootballLeague.Models.Data;
 using FootballLeague.Models.Request;
 using FootballLeague.Models.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballLeague.API.Services
 {
+    using static Common.ExceptionMessages;
     public class TeamsService : ITeamsService
     {
         private readonly FootballLeagueDbContext _dbContext;
@@ -39,7 +40,7 @@ namespace FootballLeague.API.Services
         {
             if (!_dbContext.Teams.Any())
             {
-                throw new ArgumentException("No teams available");
+                throw new ArgumentException(NoTeamsAvailableExceptionMessage);
             }
 
             var teams = await _dbContext.Teams.ToListAsync();
@@ -66,7 +67,7 @@ namespace FootballLeague.API.Services
 
             if (!teams.Any())
             {
-                throw new ArgumentException("No teams available!");
+                throw new ArgumentException(NoTeamsAvailableExceptionMessage);
             }
 
             var rankedTeams = teams
@@ -103,7 +104,7 @@ namespace FootballLeague.API.Services
 
             if (team == null)
             {
-                throw new ArgumentException("Team does not exist!");
+                throw new ArgumentException(NonExistingTeamExceptionMessage);
             }
 
             return team;

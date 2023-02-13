@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FootballLeague.Models
+namespace FootballLeague.Models.Data
 {
     public class Match
     {

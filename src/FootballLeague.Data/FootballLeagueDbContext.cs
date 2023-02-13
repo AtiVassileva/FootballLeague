@@ -1,4 +1,4 @@
-﻿using FootballLeague.Models;
+﻿using FootballLeague.Models.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballLeague.Data

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FootballLeague.Models;
+using FootballLeague.Models.Data;
 using FootballLeague.Models.Request;
 using FootballLeague.Models.Response;
 

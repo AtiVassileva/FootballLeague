@@ -2,13 +2,14 @@
 using AutoMapper.QueryableExtensions;
 using FootballLeague.API.Services.Contracts;
 using FootballLeague.Data;
-using FootballLeague.Models;
+using FootballLeague.Models.Data;
 using FootballLeague.Models.Request;
 using FootballLeague.Models.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballLeague.API.Services
 {
+    using static Common.ExceptionMessages;
     public class MatchesService : IMatchesService
     {
         private readonly FootballLeagueDbContext _dbContext;
@@ -57,7 +58,7 @@ namespace FootballLeague.API.Services
         {
             if (!_dbContext.Teams.Any())
             {
-                throw new ArgumentException("No matches available!");
+                throw new ArgumentException(NoMatchesAvailableExceptionMessage);
             }
 
             var matches = await _dbContext.Matches
@@ -114,7 +115,7 @@ namespace FootballLeague.API.Services
 
             if (match == null)
             {
-                throw new ArgumentException("Match does not exist!");
+                throw new ArgumentException(NonExistingMatchExceptionMessage);
             }
 
             return match;

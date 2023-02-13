@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FootballLeague.API.Controllers
 {
+    using static Common.ExceptionMessages;
+
     [Route("api/[controller]")]
     [ApiController]
     public class TeamsController : ControllerBase
@@ -29,7 +31,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -47,7 +49,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -65,7 +67,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -83,7 +85,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -102,7 +104,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -120,7 +122,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -129,7 +131,7 @@ namespace FootballLeague.API.Controllers
         {
             if (pointsToAdd < 0)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "Points cannot be a negative number!");
+                return StatusCode(StatusCodes.Status400BadRequest, NegativePointsExceptionMessage);
             }
 
             try
@@ -143,7 +145,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
 
@@ -161,7 +163,7 @@ namespace FootballLeague.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"A server error occured while processing your request: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, string.Format(ServerErrorExceptionMessage, ex.Message));
             }
         }
     }
