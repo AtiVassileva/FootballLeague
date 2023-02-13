@@ -97,10 +97,7 @@ namespace FootballLeague.API.Services
         {
             var match = await FindMatchAsync(id);
 
-            match.PlayedOn = model.PlayedOn;
-            match.HostGoals = model.HostGoals;
-            match.GuestGoals = model.GuestGoals;
-
+            _dbContext.Entry(match).CurrentValues.SetValues(model);
             _dbContext.SaveChanges();
 
             UpdateTeamsScore(match.HostId, match.GuestId, match.HostGoals, match.GuestGoals);

@@ -79,14 +79,11 @@ namespace FootballLeague.API.Services
             return rankedTeamsResponse;
         }
 
-        public async Task<bool> UpdateTeam(Guid id, TeamRequestModel model)
+        public async Task<bool> UpdateTeam(Guid id, TeamEditModel model)
         {
             var team = await FindTeam(id);
 
-            team.Name = model.Name;
-            team.Country = model.Country;
-            team.Points = model.Points;
-
+            _dbContext.Entry(team).CurrentValues.SetValues(model);
             _dbContext.SaveChanges();
 
             return true;

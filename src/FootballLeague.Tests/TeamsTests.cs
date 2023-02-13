@@ -16,6 +16,7 @@ namespace FootballLeague.Tests
         private Guid _invalidTestId;
         private TeamRequestModel _validModelState;
         private TeamRequestModel _invalidModelState;
+        private TeamEditModel _validEditModel;
 
         [SetUp]
         public void Init()
@@ -32,6 +33,12 @@ namespace FootballLeague.Tests
             {
                 Country = "b",
                 Points = -1
+            };
+            _validEditModel = new TeamEditModel
+            {
+                Name = "Test Team",
+                Country = "Bulgaria",
+                Points = 2
             };
         }
 
@@ -274,41 +281,24 @@ namespace FootballLeague.Tests
         public async Task UpdateTeamShouldReturnOkResultWithValidModelState()
         {
             var mockService = new Mock<ITeamsService>();
-            mockService.Setup(x => x.UpdateTeam(_validTestId, _validModelState))
+            mockService.Setup(x => x.UpdateTeam(_validTestId, _validEditModel))
                 .ReturnsAsync(true);
 
             var controller = new TeamsController(mockService.Object);
-            var result = await controller.UpdateTeam(_validTestId, _validModelState);
+            var result = await controller.UpdateTeam(_validTestId, _validEditModel);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
-        }
-
-        [Test]
-        public async Task UpdateTeamShouldReturnBadRequestResultWithInvalidModelState()
-        {
-            var mockService = new Mock<ITeamsService>();
-
-            var controller = new TeamsController(mockService.Object);
-            controller.ModelState.AddModelError("Name", "Required");
-
-            var result = await controller.UpdateTeam(_invalidTestId, _invalidModelState);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.InstanceOf<ObjectResult>());
-                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-            });
         }
 
         [Test]
         public async Task UpdateTeamShouldReturnBadRequestWhenArgumentExceptionOccurs()
         {
             var mockService = new Mock<ITeamsService>();
-            mockService.Setup(x => x.UpdateTeam(_validTestId, _validModelState))
+            mockService.Setup(x => x.UpdateTeam(_validTestId, _validEditModel))
                 .ThrowsAsync(new ArgumentException());
 
             var controller = new TeamsController(mockService.Object);
-            var result = await controller.UpdateTeam(_validTestId, _validModelState);
+            var result = await controller.UpdateTeam(_validTestId, _validEditModel);
 
             Assert.Multiple(() =>
             {
@@ -321,11 +311,11 @@ namespace FootballLeague.Tests
         public async Task UpdateTeamShouldReturnInternalServerErrorIfErrorOccurs()
         {
             var mockService = new Mock<ITeamsService>();
-            mockService.Setup(x => x.UpdateTeam(_validTestId, _validModelState))
+            mockService.Setup(x => x.UpdateTeam(_validTestId, _validEditModel))
                 .ThrowsAsync(new FormatException());
 
             var controller = new TeamsController(mockService.Object);
-            var result = await controller.UpdateTeam(_validTestId, _validModelState);
+            var result = await controller.UpdateTeam(_validTestId, _validEditModel);
 
             Assert.Multiple(() =>
             {
