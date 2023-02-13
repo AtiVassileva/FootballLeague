@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 
-namespace FootballLeague.Tests.Controllers
+namespace FootballLeague.Tests
 {
     [TestFixture]
-    public class MatchesControllerTests
+    public class MatchesTests
     {
         private Guid _validTestId;
         private Guid _invalidTestId;
@@ -253,7 +253,7 @@ namespace FootballLeague.Tests.Controllers
                 Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
             });
         }
-       
+
         [Test]
         public async Task DeleteMatchShouldReturnOkResultWithValidData()
         {
@@ -300,7 +300,7 @@ namespace FootballLeague.Tests.Controllers
                 Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
             });
         }
-        
+
         [Test]
         public async Task GetMatchesByTeamIdShouldReturnOkResultWithValidData()
         {
