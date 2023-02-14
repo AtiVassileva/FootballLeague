@@ -17,6 +17,7 @@ namespace FootballLeague.Tests
         private TeamRequestModel _validModelState;
         private TeamRequestModel _invalidModelState;
         private TeamEditModel _validEditModel;
+        private TeamEditModel _invalidEditModel;
 
         [SetUp]
         public void Init()
@@ -39,6 +40,10 @@ namespace FootballLeague.Tests
                 Name = "Test Team",
                 Country = "Bulgaria",
                 Points = 2
+            };
+            _invalidEditModel = new TeamEditModel
+            {
+                Country = "Bulgaria"
             };
         }
 
@@ -288,6 +293,23 @@ namespace FootballLeague.Tests
             var result = await controller.UpdateTeam(_validTestId, _validEditModel);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
+        [Test]
+        public async Task UpdateTeamShouldReturnBadRequestResultWithInvalidModelState()
+        {
+            var mockService = new Mock<ITeamsService>();
+
+            var controller = new TeamsController(mockService.Object);
+            controller.ModelState.AddModelError("Name", "Required");
+
+            var result = await controller.UpdateTeam(_invalidTestId, _invalidEditModel);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.InstanceOf<ObjectResult>());
+                Assert.That(((ObjectResult)result).StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            });
         }
 
         [Test]

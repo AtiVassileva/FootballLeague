@@ -111,6 +111,11 @@ namespace FootballLeague.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTeam([FromRoute] Guid id, [FromBody] TeamEditModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ModelState.Values.SelectMany(s => s.Errors));
+            }
+
             try
             {
                 var isUpdatedSuccessfully = await _teamsService.UpdateTeam(id, model);
